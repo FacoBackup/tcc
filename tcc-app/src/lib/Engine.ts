@@ -5,7 +5,6 @@ export default class Engine {
     private readonly _gl: WebGL2RenderingContext
     private readonly _canvas: HTMLCanvasElement
     private _elapsed = 0;
-    private previousCurrentTime = 0;
     private frame: number | null = null;
     private running = false;
     private readonly _renderer: Renderer;
@@ -62,8 +61,7 @@ export default class Engine {
 
     private loop(current: number) {
         try {
-            this._elapsed = current - this.previousCurrentTime
-            this.previousCurrentTime = current
+            this._elapsed = current
             this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
             this.renderer.draw()
             this.frame = requestAnimationFrame(c => this.loop(c))
