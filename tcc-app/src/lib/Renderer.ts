@@ -28,7 +28,7 @@ export default class Renderer {
     private shader2d: Shader;
     private shaderGrid: Shader;
     private shader3d: Shader;
-    show2d = false;
+    show2d = true;
     scale = 2;
     time = 0;
 
@@ -47,6 +47,8 @@ export default class Renderer {
     draw() {
         const gl = this.engine.gl;
         gl.viewport(0, 0, this.engine.canvas.width, this.engine.canvas.height)
+        this.iResolution[0] = this.engine.canvas.width
+        this.iResolution[1] = this.engine.canvas.height
         if (this.show2d) {
             this.shader2d.bind()
             this.shader2d.bindData(this.shader2d.uniforms.get("time") as WebGL2RenderingContext, this.engine.elapsed / 500., GLSLType.float)
