@@ -1,20 +1,19 @@
 precision highp float;
 
-in vec2 texCoords;
+#define xAxisColor vec3(1., 0., 0.)
+#define yAxisColor vec3(0., 1., 0.)
 
 uniform float time;
+uniform float maxValue;
+uniform vec2 iResolution;
 out vec4 fragColor;
-vec3 xAxisColor = vec3(1., 0., 0.);
-vec3 yAxisColor = vec3(0., 1., 0.);
-vec2 iResolution = vec2(1000., 1000.);
+
 
 float functionValue(float num) {
     return pow(num, 2.);
 }
 
-
-vec2 sdf(const in vec2 p)
-{
+vec2 sdf(const in vec2 p) {
     float xValue = abs(functionValue(p.x) - p.y);
     float offsetedXValue = functionValue(p.x + .5) - functionValue(p.x - .5);
 
@@ -30,11 +29,16 @@ vec2 sdf(const in vec2 p)
     );
 }
 
-vec2 draw(const in vec2 p, const in float zoom, const in float thickness)
-{
+vec2 draw(const in vec2 p, const in float zoom, const in float thickness) {
     vec2 rz = sdf(p);
     rz *= (1. / thickness) / sqrt(zoom / iResolution.y);
     rz = 1. - clamp(rz, 0., 1.);
+    if (p.x > maxValue) {
+        rz.x = 0.;
+    }
+    if (p.y > maxValue) {
+        rz.y = 0.;
+    }
     return rz;
 }
 
