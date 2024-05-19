@@ -4,16 +4,16 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 cameraPosition;
 uniform float time;
+uniform float scale;
 out vec3 tPosition;
 
 float getFunctionValue(float x, float z) {
-    return pow(x, 2.) + pow(z, 2.);
+    return cos(x + time) + sin(z + time);
 }
 
 void main() {
     tPosition = position;
-    tPosition.y = getFunctionValue(tPosition.x, tPosition.z);
+    tPosition.y = getFunctionValue(tPosition.x * scale, tPosition.z * scale);
 
-    gl_Position.xyz = vec3( projectionMatrix * viewMatrix  * vec4(tPosition, 1.));
-    gl_Position.w = 1.;
+    gl_Position = projectionMatrix * viewMatrix * vec4(tPosition, 1.);
 }

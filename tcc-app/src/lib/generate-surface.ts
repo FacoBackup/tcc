@@ -4,8 +4,8 @@ export default function generateSurface(gl: WebGL2RenderingContext, vertexCount:
     const count = vertexCount ** 2
     const vertices = new Float32Array(count * 3),
         indices = new Float32Array(6 * (vertexCount - 1) * vertexCount)
-    const OFFSET = 1 / 2
-    const SCALE = 1
+    const SCALE = 10
+    const OFFSET = SCALE/2
     let vertexPointer = 0
 
     for (let i = 0; i < vertexCount; i++) {
@@ -36,5 +36,6 @@ export default function generateSurface(gl: WebGL2RenderingContext, vertexCount:
             indices[pointer++] = bottomRight
         }
     }
+
     return new Mesh(gl, {vertices, indices})
 }
