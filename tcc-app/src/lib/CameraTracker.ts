@@ -8,7 +8,7 @@ export default class CameraTracker {
     scrollSpeed = .5
     turnSpeed = .01
     yaw = Math.PI / 2
-    pitch = .5
+    pitch = Math.PI / 2
     position = vec3.create()
     viewMatrix = mat4.create()
     projectionMatrix = mat4.create()

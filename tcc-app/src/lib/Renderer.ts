@@ -5,6 +5,8 @@ import fragment from "./shaders/fragment.frag?raw"
 // @ts-ignore
 import frag3d from "./shaders/frag3d.frag?raw"
 // @ts-ignore
+import fragSdf from "./shaders/fragsdf.frag?raw"
+// @ts-ignore
 import fragGrid from "./shaders/fragGrid.frag?raw"
 // @ts-ignore
 import vertex from "./shaders/vertex.vert?raw"
@@ -35,7 +37,7 @@ export default class Renderer {
     constructor(engine: Engine) {
         this.engine = engine;
         const gl = this.engine.gl;
-        this.shader2d = new Shader(gl, vertex, fragment)
+        this.shader2d = new Shader(gl, vertex, fragSdf)
         this.shader3d = new Shader(gl, vertex3d, frag3d)
         this.shaderGrid = new Shader(gl, vertexGrid, fragGrid)
         this.quad = new Mesh(gl, QUAD)
@@ -54,17 +56,18 @@ export default class Renderer {
             this.shader2d.bindData(this.shader2d.uniforms.get("time") as WebGL2RenderingContext, this.engine.elapsed / 500., GLSLType.float)
             this.shader2d.bindData(this.shader2d.uniforms.get("maxValue") as WebGL2RenderingContext, this.functionLimit, GLSLType.float)
             this.shader2d.bindData(this.shader2d.uniforms.get("iResolution") as WebGL2RenderingContext, this.iResolution, GLSLType.vec2)
+            this.shader2d.bindData(this.shader2d.uniforms.get("viewMatrix") as WebGL2RenderingContext, this.cameraTracker.viewMatrix, GLSLType.mat4)
+            this.shader2d.bindData(this.shader2d.uniforms.get("projectionMatrix") as WebGL2RenderingContext, this.cameraTracker.projectionMatrix, GLSLType.mat4)
+            this.shader2d.bindData(this.shader2d.uniforms.get("cameraPosition") as WebGL2RenderingContext, this.cameraTracker.position, GLSLType.vec3)
             this.quad.draw()
         } else {
-            this.bindUniforms(this.shaderGrid)
-            this.plane.draw()
-
             this.bindUniforms(this.shader3d)
             this.shader3d.bindData(this.shader3d.uniforms.get("time") as WebGL2RenderingContext, this.time, GLSLType.float)
             this.shader3d.bindData(this.shader3d.uniforms.get("drawComplete") as WebGL2RenderingContext, true, GLSLType.bool)
             this.plane.draw()
-
         }
+        this.bindUniforms(this.shaderGrid)
+        this.plane.draw()
     }
 
     bindUniforms(shader: Shader) {

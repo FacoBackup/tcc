@@ -19,13 +19,7 @@ float lineSegment(in vec2 p, in vec2 a, in vec2 b) {
     return length(pa - h * ba);
 }
 
-void main() {
-    float zoom = 7.5;
-    float screenAspectRatio = iResolution.x / iResolution.y;
-    vec2 uvCoords = gl_FragCoord.xy / iResolution.xy;
-    uvCoords.x = (uvCoords.x * screenAspectRatio) + (1. - screenAspectRatio) * .5;
-    vec2 scaledUVCoord = uvCoords * zoom - 0.5 * zoom;
-
+vec3 compute(vec2 coords){
     vec3 color = vec3(0.);
     vec2 v1 = vec2(0., .0);
     vec2 v2 = vec2(0., .0);
@@ -41,11 +35,23 @@ void main() {
         v1.y = lastY;
         v2.x = float(i) / float(samples / spacing) - offset;
         v2.y = functionValue(v1.x);
-        float d = lineSegment(scaledUVCoord, v1, v2) - thickness;
+        float d = lineSegment(coords, v1, v2) - thickness;
         color = mix(color, vec3(1.), 1. - smoothstep(.0, .015, abs(d)));
         lastX = v2.x;
         lastY = v2.y;
     }
+    return color;
+}
+void main() {
+    float zoom = 7.5;
+    float screenAspectRatio = iResolution.x / iResolution.y;
+    vec2 uvCoords = gl_FragCoord.xy / iResolution.xy;
+    uvCoords.x = (uvCoords.x * screenAspectRatio) + (1. - screenAspectRatio) * .5;
+    vec2 scaledUVCoord = uvCoords * zoom - 0.5 * zoom;
+
+    vec3 color = compute(scaledUVCoord);
+
+    if(length(color) < .1) discard;
 
     fragColor = vec4(color, 1.);
 }
